@@ -89,17 +89,17 @@
 
     <script type="text/babel">
         class App extends React.Component {
-            // t = TrelloPowerUp.iframe()
+            t = TrelloPowerUp.iframe()
 
             constructor(props) {
                 super(props)
-                // this.t.render(
-                //     this.t.sizeTo("#content").done()
-                // )
-                // this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
-                //     this.state = {bgStart, bgEnd}
-                // })
-                this.state = {bgStart: "red", bgEnd: "green"}
+                this.t.render(
+                    this.t.sizeTo("#content").done()
+                )
+                this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
+                    this.state = {bgStart, bgEnd}
+                })
+                // this.state = {bgStart: "red", bgEnd: "green"}
             }
 
             save = () => {
