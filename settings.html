@@ -91,11 +91,16 @@
         class App extends React.Component {
             t = TrelloPowerUp.iframe()
 
+            renderS = () => this.t.render(() => {
+                this.t.sizeTo("#content").done()
+            })
+
             constructor(props) {
                 super(props)
                 this.state = { bgStart: "transparent", bgEnd: "green" }
                 this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
                     this.setState({bgStart, bgEnd})
+                    this.renders()
                 })
                 // this.state = {bgStart: "red", bgEnd: "green"}
             }
