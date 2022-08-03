@@ -126,10 +126,10 @@
                 // this.state = {bgStart: "red", bgEnd: "green"}
             }
 
-            save = () => {
-                t.set("board", "shared", "bgStart", this.state.bgStart)
-                t.set("board", "shared", "bgEnd", this.state.bgEnd)
-                t.alert({
+            save = async() => {
+                await t.set("board", "shared", "bgStart", this.state.bgStart)
+                await t.set("board", "shared", "bgEnd", this.state.bgEnd)
+                await t.alert({
                     message: 'Saved successfully',
                     duration: 3,
                 });
