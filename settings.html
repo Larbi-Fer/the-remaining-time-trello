@@ -100,8 +100,8 @@
                 this.state = { bgStart: "transparent", bgEnd: "green" }
                 this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
                     this.setState({bgStart, bgEnd})
-                    this.renders()
                 })
+                this.renders()
                 // this.state = {bgStart: "red", bgEnd: "green"}
             }
 
