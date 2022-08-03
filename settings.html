@@ -129,6 +129,11 @@
             save = () => {
                 t.set("board", "shared", "bgStart", this.state.bgStart)
                 t.set("board", "shared", "bgEnd", this.state.bgEnd)
+                t.alert({
+                    message: 'Saved successfully',
+                    duration: 3,
+                });
+                t.closePopup()
             }
 
             render() {
