@@ -88,14 +88,14 @@
     <script src="https://p.trellocdn.com/power-up.min.js"></script>
 
     <script type="text/babel">
-        t = TrelloPowerUp.iframe()
+        var t = TrelloPowerUp.iframe()
 
         class App extends React.Component {
-            t = TrelloPowerUp.iframe()
+
             constructor(props) {
                 super(props)
                 this.state = { bgStart: "transparent", bgEnd: "green" }
-                this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
+                t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
                     this.setState({bgStart, bgEnd})
                 })
                 // this.state = {bgStart: "red", bgEnd: "green"}
@@ -170,7 +170,7 @@
 
         ReactDOM.render(<App />, domContainer)
 
-        this.t.render(() => {
+        t.render(() => {
             this.t.sizeTo("#content").done()
         })
     </script>
