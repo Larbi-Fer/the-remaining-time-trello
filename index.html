@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The remaining time</title>
+</head>
+<body>
+    
+
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+
+    <script>
+        bg = {
+            black: [ "transparent", "yellow", "cyan" ]
+        }
+
+        TrelloPowerUp.initialize({
+            // show remaining time
+            "card-badges": (t, opts) => {
+                // let cardAttachments = opts.attachments; // Trello passes you the attachments on the card
+                return t
+                .card("all")
+                // .get("name", "id")
+                .then(card => {
+                    var due = card.due
+                    var start = card.badges.start
+                    var dueComplete = card.dueComplete
+                    var color = null
+                    return [
+                    {
+                        // Dynamic badges can have their function rerun
+                        // after a set number of seconds defined by refresh.
+                        // Minimum of 10 seconds.
+                        // we could also return a Promise that resolves to
+                        // this as well if we needed to do something async first
+                        dynamic: async() => {
+                            const { board: { shared: { bgStart, bgEnd } } } = await t.getAll("board", "shared")
+                            
+                            var time;
+                            return {
+                                text: (() => {
+                                time = false
+                                if (dueComplete) return null
+                                if (start) {
+                                    start = new Date(start)
+                                    now = new Date()
+                                    m = new Date(start - now)
+                                    if (m > 0) {
+                                        time = true
+                                        start = moment(start)
+                                        now = moment(now)
+                                        d = moment.preciseDiff(start, now, true)
+                                        color = bgEnd
+                                        return g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], "H") + g(d["minutes"], "M") + " to Start"
+                                    }
+                                }
+                                
+                                if (!due) return null
+                                due = new Date(due)
+                                now = new Date()
+                                m = new Date(due - now)
+                                if (m < 0) return null
+                                time = true
+                                due = moment(due)
+                                now = moment(now)
+                                d = moment.preciseDiff(due, now, true)
+                                color = bgEnd
+                                // if (d["hours"] < 5 && d["days"] == 0 && d["months"] == 0 && d["year"] == 0) color = "yellow"
+                                return g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], "H") + g(d["minutes"], "M") + "to Finish"
+                                // return `${}:`
+                                })(),
+                                color: color,
+                                icon: time ? "./time.png" : null,
+                                refresh: 60
+                            }
+                        }
+                    },
+                    ];
+                });
+            },
+            // show settings
+            "show-settings": t => t.popup({
+                title: "settings",
+                url: "./settings.html",
+                height: 150
+            }),
+            "on-enable": t => {
+                t.set("board", "shared", "bgStart", "transparent")
+                t.set("board", "shared", "bgEnd", "green")
+            }
+        })
+    </script>
+
+</body>
+</html>

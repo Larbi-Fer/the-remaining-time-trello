@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://trello.com/power-ups/power-up.css">
+    <title>Settings</title>
+
+    <style>
+        .list {
+            position: relative;
+        }
+        .list .title {
+            width: 100%;
+            max-width: 250px;
+            color: #fff;
+            padding: 5px 20px;
+            margin: 10px 5px;
+            border: 1px solid #3332;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .list .title:hover{
+            box-shadow: 3px 3px 10px #0005;
+        }
+        .list .items {
+            box-shadow: 55px 3px 25px #0005;
+        }
+        .list .items {
+            position: absolute;
+            display: none;
+            max-width: 250px;
+            top: calc(100% + 3px);
+            left: 5px;
+            width: 100%;
+            z-index: 10;
+        }
+        .list.active .items{
+            display: block;
+            height: fit-content;
+        }
+        .list .items .item {
+            width: 100%;
+            padding: 5px 25px;
+            margin: 0;
+            background-color: #eee;
+            border-bottom: 0.5px solid #2221;
+            position: relative;
+            transition: all .3s;
+            cursor: pointer;
+        }
+        .list .items .item:hover {
+            border-bottom: 0.5px solid #2223;
+            font-weight: 500;
+        }
+        .list .items .item div {
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            border-radius: 50%;
+        }
+        .list .items .item:first-child {border-top-left-radius: 5px;border-top-right-radius: 5px;}
+        .list .items .item:last-child {border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;}
+
+        .all {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9;
+        }
+    </style>
+    
+</head>
+<body>
+    <div id="content">
+
+    </div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+
+    <script type="text/babel">
+        class App extends React.Component {
+            // t = TrelloPowerUp.iframe()
+
+            constructor(props) {
+                super(props)
+                // this.t.render(
+                //     this.t.sizeTo("#content").done()
+                // )
+                // this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
+                //     this.state = {bgStart, bgEnd}
+                // })
+                this.state = {bgStart: "red", bgEnd: "green"}
+            }
+
+            save = () => {
+                this.t.set("board", "shared", "bgStart", this.state.bgStart)
+                this.t.set("board", "shared", "bgEnd", this.state.bgEnd)
+            }
+
+            render() {
+                return (
+                    <React.StrictMode>
+                        <label>Remaining time to start</label>
+                        <Colors onChange={color => this.setState({ bgStart: color })} select={this.state.bgStart} />
+                        <label>Remaining time to finish</label>
+                        <Colors onChange={color => this.setState({ bgEnd: color })} select={this.state.bgEnd} />
+                        <button className="mod-primary" style={{width: "100%", maxWidth: "250px"}} onClick={this.save}>Save</button>
+                    </React.StrictMode>
+                )
+            }
+        }
+
+
+        class Colors extends React.Component {
+            t = "transparent"
+            colors = [ this.t, "blue", "red", "green", "yellow", "brown", "crimson", "cyan", "orange" ]
+            bg = {
+                black: [ "transparent", "yellow", "cyan" ]
+            }
+
+            constructor(props) {
+                super(props)
+                this.state = {
+                    active: false
+                }
+            }
+
+            onChange = color => () => {
+                this.props.onChange(color)
+                this.setState({active: false})
+            }
+
+            setAct = () => this.setState(st => ({ active: !st.active }))
+
+            render() {
+                return (
+                    <React.StrictMode>
+                        { this.state.active ? <div class="all" onClick={this.setAct}></div> : ""}
+                        <div className={"list" + ( this.state.active ? " active" : "" )}>
+                            <div className="title" style={{background: this.props.select == this.t ? "#fff" : this.props.select, ...(this.bg.black.find(b => b == this.props.select) ? { color: "#000" } : {})}} onClick={ this.setAct }>{ this.props.select }</div>
+                            <div className="items">
+                                { this.colors.map(color => (
+                                    <React.StrictMode>
+                                        <div className="item" onClick={this.onChange(color)}>
+                                            {color}
+                                            <div style={{background: (color == this.t ? "#fff" : color)}}></div>
+                                        </div>
+                                    </React.StrictMode>
+                                )) }
+                            </div>
+                        </div>
+                    </React.StrictMode>
+                )
+            }
+        }
+
+        const domContainer = document.querySelector('#content')
+
+        ReactDOM.render(<App />, domContainer)
+    </script>
+
+</body>
+</html>
