@@ -57,7 +57,7 @@
                                             start = moment(start)
                                             now = moment(now)
                                             d = moment.preciseDiff(start, now, true)
-                                            color = bgStart
+                                            color = bgStart == "transparent" ? null : bgStart
                                             console.log(3)
                                             return g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], "H") + g(d["minutes"], "M") + " to Start"
                                         }
@@ -74,7 +74,7 @@
                                     due = moment(due)
                                     now = moment(now)
                                     d = moment.preciseDiff(due, now, true)
-                                    color = bgEnd
+                                    color = bgEnd == "transparent" ? null : bgEnd
                                     console.log(6)
                                     // if (d["hours"] < 5 && d["days"] == 0 && d["months"] == 0 && d["year"] == 0) color = "yellow"
                                     return g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], "H") + g(d["minutes"], "M") + "to Finish"
