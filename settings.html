@@ -8,11 +8,32 @@
     <title>Settings</title>
 
     <style>
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient( 45deg, #555, #999);
+            border-radius: 30px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient( 45deg, #999, #999);
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: #777;
+        }
+
         .list {
             position: relative;
         }
         .list .title {
-            width: 100%;
             max-width: 250px;
             color: #fff;
             padding: 5px 20px;
@@ -26,15 +47,13 @@
             box-shadow: 3px 3px 10px #0005;
         }
         .list .items {
-            box-shadow: 55px 3px 25px #0005;
-        }
-        .list .items {
             position: absolute;
             display: none;
             max-width: 250px;
             top: calc(100% + 3px);
             left: 5px;
-            width: 100%;
+            width: calc(100% - 65px);
+            box-shadow: 55px 3px 25px #0005;
             z-index: 10;
         }
         .list.active .items{
@@ -102,8 +121,8 @@
             }
 
             save = () => {
-                this.t.set("board", "shared", "bgStart", this.state.bgStart)
-                this.t.set("board", "shared", "bgEnd", this.state.bgEnd)
+                t.set("board", "shared", "bgStart", this.state.bgStart)
+                t.set("board", "shared", "bgEnd", this.state.bgEnd)
             }
 
             render() {
@@ -144,7 +163,7 @@
             render() {
                 return (
                     <React.StrictMode>
-                        { this.state.active ? <div class="all" onClick={this.setAct}></div> : ""}
+                        { this.state.active ? <div className="all" onClick={this.setAct}></div> : ""}
                         <div className={"list" + ( this.state.active ? " active" : "" )}>
                             <div className="title" style={{background: this.props.select == this.t ? "#fff" : this.props.select, ...(this.bg.black.find(b => b == this.props.select) ? { color: "#000" } : {})}} onClick={ this.setAct }>{ this.props.select }</div>
                             <div className="items">
