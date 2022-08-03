@@ -88,7 +88,10 @@
     <script src="https://p.trellocdn.com/power-up.min.js"></script>
 
     <script type="text/babel">
+        t = TrelloPowerUp.iframe()
+
         class App extends React.Component {
+            t = TrelloPowerUp.iframe()
             constructor(props) {
                 super(props)
                 this.state = { bgStart: "transparent", bgEnd: "green" }
@@ -166,8 +169,6 @@
         const domContainer = document.querySelector('#content')
 
         ReactDOM.render(<App />, domContainer)
-
-        t = TrelloPowerUp.iframe()
 
         this.t.render(() => {
             this.t.sizeTo("#content").done()
