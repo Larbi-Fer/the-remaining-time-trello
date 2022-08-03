@@ -93,9 +93,6 @@
 
             constructor(props) {
                 super(props)
-                this.t.render(
-                    this.t.sizeTo("#content").done()
-                )
                 this.t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
                     this.state = {bgStart, bgEnd}
                 })
@@ -111,7 +108,7 @@
                 return (
                     <React.StrictMode>
                         <label>Remaining time to start</label>
-                        <Colors onChange={color => this.setState({ bgStart: color })} select={this.state.bgStart} />
+                        <Colors onChange={color => this.setState({ bgStart: color })} select={this.state.bgStart} trello={t} />
                         <label>Remaining time to finish</label>
                         <Colors onChange={color => this.setState({ bgEnd: color })} select={this.state.bgEnd} />
                         <button className="mod-primary" style={{width: "100%", maxWidth: "250px"}} onClick={this.save}>Save</button>
@@ -130,6 +127,9 @@
 
             constructor(props) {
                 super(props)
+                this.props.trello.render(
+                    this.props.trello.sizeTo("#content").done()
+                )
                 this.state = {
                     active: false
                 }
