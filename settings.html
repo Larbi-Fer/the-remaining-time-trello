@@ -165,7 +165,7 @@
             }
 
             onChange = color => () => {
-                this.props.onChange(color)
+                this.props.onChange(typeof(color) == "object" ? color[1] : color)
                 this.setState({active: false})
             }
 
