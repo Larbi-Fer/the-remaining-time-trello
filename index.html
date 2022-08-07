@@ -17,7 +17,9 @@
         bg = {
             black: [ "transparent", "yellow", "cyan" ]
         }
-        const g = (date, st) => !date ? "" : `${date}${st} `
+        const g = (date, st, space=true) => !date ? "" : `${date}${st}${space ? " " : ""}`
+
+        const gnr = date => g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], ":", false) + g(d["minutes"], "")
 
         TrelloPowerUp.initialize({
             // show remaining time
@@ -50,7 +52,7 @@
                                             now = moment(now)
                                             d = moment.preciseDiff(start, now, true)
                                             color = bgStart == "transparent" ? null : bgStart
-                                            return g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], "H") + g(d["minutes"], "M") + " to Start"
+                                            return gnr(d) + " to Start"
                                         }
                                     }
                                     
@@ -65,7 +67,7 @@
                                     d = moment.preciseDiff(due, now, true)
                                     color = bgEnd == "transparent" ? null : bgEnd
                                     // if (d["hours"] < 5 && d["days"] == 0 && d["months"] == 0 && d["year"] == 0) color = "yellow"
-                                    return g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], "H") + g(d["minutes"], "M") + "to Finish"
+                                    return gnr(d) + "to Finish"
                                     // return `${}:`
                                 })(),
                                 color: color,
