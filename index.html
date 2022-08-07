@@ -29,7 +29,7 @@
             return date
         }
 
-        const gnr = d => g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + gh(d)
+        const gnr = d => g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + gh(d) + " "
 
         TrelloPowerUp.initialize({
             // show remaining time
