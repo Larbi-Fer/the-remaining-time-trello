@@ -152,7 +152,7 @@
 
         class Colors extends React.Component {
             t = "transparent"
-            colors = [ this.t, "blue", "skyblue", "green", "yellow", "pink", "red", "cyan", "orange" ]
+            colors = [ this.t, "blue", ["sky", "skyblue"], "green", "yellow", "pink", "red", "orange" ]
             bg = {
                 black: [ this.t, "yellow", "cyan" ]
             }
@@ -181,8 +181,8 @@
                                 { this.colors.map(color => (
                                     <React.StrictMode>
                                         <div className="item" onClick={this.onChange(color)}>
-                                            {color}
-                                            <div style={{background: (color == this.t ? "#fff" : color)}}></div>
+                                            {typeof(color) == "object" ? color[0] : color}
+                                            <div style={{background: (color == this.t ? "#fff" : (typeof(color) == "object" ? color[1] : color))}}></div>
                                         </div>
                                     </React.StrictMode>
                                 )) }
