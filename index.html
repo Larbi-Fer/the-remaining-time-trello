@@ -19,7 +19,7 @@
         }
         const g = (date, st, space=true) => !date ? "" : `${date}${st}${space ? " " : ""}`
 
-        const gnr = date => g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], ":", false) + g(d["minutes"], "")
+        const gnr = d => g(d["year"], "Y") + g(d["months"], "M") + g(d["days"], "D") + g(d["hours"], ":", false) + g(d["minutes"], "")
 
         TrelloPowerUp.initialize({
             // show remaining time
