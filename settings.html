@@ -9,25 +9,8 @@
 
     <style>
         ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, .1);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient( 45deg, #555, #999);
-            border-radius: 30px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient( 45deg, #999, #999);
-        }
-
-        ::-webkit-scrollbar-thumb:active {
-            background: #777;
+            width: 0;
+            height: 0;
         }
 
         .list {
@@ -89,7 +72,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 100%;
+            width: 99%;
             height: 100%;
             z-index: 9;
         }
@@ -98,6 +81,39 @@
         }
         button {
             margin: 10px;
+        }
+
+        /* top style */
+        div.top {
+            display: flex;
+        }
+
+        div.top div {
+            margin: auto;
+            width: 100%;
+            text-align: center;
+            background: #ddd;
+            padding: 5px;
+            border: 1px solid #2223;
+            cursor: pointer;
+        }
+
+        div.top div:first-child { border-top-left-radius: 10px; }
+        div.top div:last-child { border-top-right-radius: 10px; }
+
+        div.bottom {
+            border: 1px solid #2223;
+            border-top: 1px solid #0000;
+        }
+
+        div.top div.activate {
+            background-color: #fff;
+            font-weight: bold;
+            border-bottom: 0;
+        }
+
+        div[disabled] {
+            cursor: no-drop !important;
         }
     </style>
     
@@ -119,16 +135,31 @@
 
             constructor(props) {
                 super(props)
-                this.state = { bgStart: "transparent", bgEnd: "green" }
-                t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd } } }) => {
-                    this.setState({bgStart, bgEnd})
+                this.state = { shared: {bgStart: "transparent", bgEnd: "green"}, private: {bgStart: "transparent", bgEnd: "green"}, isShared: true, isWrite: false }
+                t.getAll("board", "shared").then(({ board: { shared: { bgStart, bgEnd }, private: { bgStart: s1, bgEnd: e1, isShared } } }) => {
+                    this.setState({
+                        shared: {bgStart, bgEnd},
+                        private: {bgStart: s1, bgEnd: e1},
+                        isShared,
+                        // isWrite: t.getContext().permissions.board === "write"
+                        isWrite: !t.memberCanWriteToModel("board")
+                    })
+                    console.log(this.state)
                 })
-                // this.state = {bgStart: "red", bgEnd: "green"}
+                // memberCanWriteToModel
             }
 
             save = async() => {
-                await t.set("board", "shared", "bgStart", this.state.bgStart)
-                await t.set("board", "shared", "bgEnd", this.state.bgEnd)
+                const getColor = (color) => (typeof(color) == "object" ? color[0] : color)
+
+                const bgStart = this.state[this.state.isShared ? "shared" : "private"].bgStart
+                const bgEnd = this.state[this.state.isShared ? "shared" : "private"].bgEnd
+
+                await t.set("board", this.state.isShared ? "shared" : "private", "bgStart", getColor(bgStart))
+                await t.set("board", this.state.isShared ? "shared" : "private", "bgEnd", getColor(bgEnd))
+                // save is Shared
+                await t.set("board", "private", "isShared", this.state.isShared)
+
                 await t.alert({
                     message: 'Saved successfully',
                     duration: 3,
@@ -136,14 +167,25 @@
                 t.closePopup()
             }
 
+            reverseA = () => this.setState({ isShared: !this.state.isShared })
+
+            
             render() {
+                const type = this.state.isShared ? "shared" : "private"
+                
                 return (
                     <React.StrictMode>
-                        <label>Remaining time to start</label>
-                        <Colors onChange={color => this.setState({ bgStart: color })} select={this.state.bgStart} />
-                        <label>Remaining time to finish</label>
-                        <Colors onChange={color => this.setState({ bgEnd: color })} select={this.state.bgEnd} />
-                        <button className="mod-primary" style={{width: "100%", maxWidth: "250px"}} onClick={this.save}>Save</button>
+                        <div className="top">
+                            <div className={this.state.isShared ? "activate" : ""} onClick={this.reverseA}>shared</div>
+                            <div className={this.state.isShared ? "" : "activate"} onClick={this.reverseA}>private</div>
+                        </div>
+                        <div className="bottom">
+                            <label>Remaining time to start</label>
+                            <Colors onChange={color => this.setState({ [type]: { ...this.state[type], bgStart: color } })} select={this.state[type].bgStart} isDisabled={ this.state.isShared ? this.state.isWrite : false } />
+                            <label>Remaining time to finish</label>
+                            <Colors onChange={color => this.setState({ [type]: { ...this.state[type], bgEnd: color } })} select={this.state[type].bgEnd} isDisabled={ this.state.isShared ? this.state.isWrite : false } />
+                            <button className="mod-primary" style={{width: "100%", maxWidth: "250px"}} onClick={this.save}>Save</button>
+                        </div>
                     </React.StrictMode>
                 )
             }
@@ -164,19 +206,30 @@
                 }
             }
 
+            componentDidUpdate() {
+                t.sizeTo( "#content" ).done()
+            }
+
             onChange = color => () => {
-                this.props.onChange(typeof(color) == "object" ? color[1] : color)
+                this.props.onChange(color)
                 this.setState({active: false})
             }
 
-            setAct = () => this.setState(st => ({ active: !st.active }))
+            setAct = () => {
+                this.setState(st => ({ active: !st.active }))
+            }
+
+            msg = () => t.alert({ message: "You don't have permission" })
+
+            getColor = i => (typeof(this.props.select) == "object" ? this.props.select[i] : this.props.select)
 
             render() {
+                console.log(this.props.isDisabled)
                 return (
                     <React.StrictMode>
                         { this.state.active ? <div className="all" onClick={this.setAct}></div> : ""}
                         <div className={"list" + ( this.state.active ? " active" : "" )}>
-                            <div className="title" style={{background: this.props.select == this.t ? "#fff" : this.props.select, ...(this.bg.black.find(b => b == this.props.select) ? { color: "#000" } : {})}} onClick={ this.setAct }>{ this.props.select }</div>
+                            <div disabled={ this.props.isDisabled } className="title" style={{background: this.props.select == this.t ? "#fff" : this.getColor(1), ...(this.bg.black.find(b => b == this.props.select) ? { color: "#000" } : {})}} onClick={ this.props.isDisabled ? this.msg : this.setAct }>{ this.getColor(0) }</div>
                             <div className="items">
                                 { this.colors.map(color => (
                                     <React.StrictMode>

@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/moment-precise-range-plugin@1.3.0/moment-precise-range.min.js"></script>
 
     <script>
-        bg = {
+        var bg = {
             black: [ "transparent", "yellow", "cyan" ]
         }
         const g = (date, st, space=true) => !date ? "" : `${date}${st} `
@@ -46,7 +46,10 @@
                     return [
                     {
                         dynamic: async() => {
-                            const { board: { shared: { bgStart, bgEnd } } } = await t.getAll("board", "shared")
+                            var { board: { shared: { bgStart, bgEnd }, private: { bgStart: s2, bgEnd: e2, isShared } } } = await t.getAll("board", "private")
+                            console.log(s2, e2)
+                            bgStart = isShared ? bgStart : s2
+                            bgEnd = isShared ? bgEnd : e2
                             var time;
                             return {
                                 text: (() => {
@@ -96,8 +99,12 @@
                 height: 150
             }),
             "on-enable": t => {
-                t.set("board", "shared", "bgStart", "transparent")
-                t.set("board", "shared", "bgEnd", "green")
+                ["shared", "private"].forEach(async type => {
+                    console.log("type: ", type)
+                    await t.set("board", type, "bgStart", "transparent")
+                    await t.set("board", type, "bgEnd", "green")
+                })
+                t.set("board", "private", "isShared", true)
             }
         })
     </script>
